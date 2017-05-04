@@ -1,15 +1,11 @@
 package es.hazerta.uam;
 
-import com.vaadin.data.Item;
-import com.vaadin.data.Property;
-import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.data.util.GeneratedPropertyContainer;
-import com.vaadin.data.util.PropertyValueGenerator;
+import java.util.List;
+
 import com.vaadin.server.Sizeable;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
 import com.vaadin.ui.renderers.ButtonRenderer;
@@ -35,21 +31,30 @@ public class ApartadoAlumnos extends VerticalLayout {
 
 	public VerticalLayout dameVentana() {
 		VerticalLayout infoLayout = new VerticalLayout();
-		BeanItemContainer<Alumno> listaAlumnos =
-			    new BeanItemContainer<Alumno>(Alumno.class, new BBDD().obtenerAlumnos());
-		Grid alumnos = new Grid(listaAlumnos);
+		/*BeanItemContainer<Alumno> listaAlumnos =
+			    new BeanItemContainer<Alumno>(Alumno.class, new BBDD().obtenerAlumnos());*/
+		List<Alumno> listaAlumnos = new BBDD().obtenerAlumnos();
+		Grid alumnos = new Grid();
 
-//		alumnos.addColumn("Nombre", String.class);
-//		alumnos.addColumn("Apellidos", String.class);
-//		alumnos.addColumn("Edición", Button.class);
-		GeneratedPropertyContainer gpc =
+		alumnos.addColumn("Id", Integer.class);
+		alumnos.addColumn("Nombre", String.class);
+		alumnos.addColumn("Apellidos", String.class);
+		alumnos.addColumn("Dni", String.class);
+		alumnos.addColumn("MesNacimiento", Integer.class);
+		alumnos.addColumn("Acciones", String.class);
+		
+		for(Alumno alumno : listaAlumnos){
+			alumnos.addRow(alumno.getId(), alumno.getNombre(), alumno.getApellidos(), alumno.getDni(), alumno.getMesNacimiento(), "Editar");
+		}
+		
+		/*GeneratedPropertyContainer gpc =
 			    new GeneratedPropertyContainer(listaAlumnos);
-				gpc.addGeneratedProperty("nombre", new PropertyValueGenerator<String>() {
+				gpc.addGeneratedProperty("editar", new PropertyValueGenerator<String>() {
 
 			    @Override
 			    public String getValue(Item item, Object itemId,
 			                           Object propertyId) {
-			        return "Nombre"; // The caption
+			        return "Editar"; // The caption
 			    }
 
 			    @Override
@@ -57,8 +62,9 @@ public class ApartadoAlumnos extends VerticalLayout {
 			        return String.class;
 			    }
 			});
-
-		alumnos.getColumn("nombre").setRenderer(new ButtonRenderer(e -> {
+*/
+		
+		alumnos.getColumn("Acciones").setRenderer(new ButtonRenderer(e -> {
 			//int id = (int) alumnos.getContainerDataSource().getItem(e.getItemId()).getItemProperty("id").getValue();
 			Alumno alumno = new AlumnoController().obtenerAlumno(alumnos.getContainerDataSource().getItem(e.getItemId()));
 			infoLayout.removeAllComponents();

@@ -16,19 +16,19 @@ public class EditarAlumno extends VerticalLayout {
 		setSizeFull();
 		HorizontalLayout fila1 = new HorizontalLayout();
 		HorizontalLayout fila2 = new HorizontalLayout();
-		
+
 		fila1.setSizeFull();
 		fila2.setSizeFull();
-		
+
 		fila1.addComponent(dameEdicion());
-		fila1.addComponent(dameAsignaturas());
-		
-		fila2.addComponent(dameProfesores());
+		fila1.addComponent(dameAsignaturasProfesores());
+
+		// fila2.addComponent(dameProfesores());
 		fila2.addComponent(dameNotas());
-		
+
 		addComponent(fila1);
 		addComponent(fila2);
-		
+
 	}
 
 	public VerticalLayout dameEdicion() {
@@ -44,50 +44,47 @@ public class EditarAlumno extends VerticalLayout {
 		dni.setValue(alumno.getDni());
 		mesNacimiento.setValue(Integer.toString(alumno.getMesNacimiento()));
 		guardar.addClickListener(e -> {
-			alumno = new Alumno(dni.getValue(), nombre.getValue(), apellidos.getValue(), Integer.parseInt(mesNacimiento.getValue()), alumno.getId());
+			alumno = new Alumno(dni.getValue(), nombre.getValue(), apellidos.getValue(),
+					Integer.parseInt(mesNacimiento.getValue()), alumno.getId());
 			new BBDD().actualizarAlumno(alumno);
 		});
-		
+
 		edicion.setSizeFull();
-		
+
 		edicion.addComponent(nombre);
 		edicion.addComponent(apellidos);
 		edicion.addComponent(dni);
 		edicion.addComponent(mesNacimiento);
 		edicion.addComponent(guardar);
-		
+
 		return edicion;
 	}
 
-	public VerticalLayout dameAsignaturas() {
+	public VerticalLayout dameAsignaturasProfesores() {
 		VerticalLayout asignaturas = new VerticalLayout();
-		BeanItemContainer<Asignatura> listaAsignaturas =
-			    new BeanItemContainer<Asignatura>(Asignatura.class, new BBDD().obtenerAsignaturasAlumno(alumno.getId()));
+		BeanItemContainer<Asignatura> listaAsignaturas = new BeanItemContainer<Asignatura>(Asignatura.class,
+				new BBDD().obtenerAsignaturasAlumno(alumno.getId()));
 		Grid asignaturasGrid = new Grid(listaAsignaturas);
-		
+
 		asignaturas.setSizeFull();
 		asignaturasGrid.setSizeFull();
-		
+
 		asignaturas.addComponent(asignaturasGrid);
 		return asignaturas;
-		
-	}
 
-	public VerticalLayout dameProfesores() {
-		VerticalLayout profesores = new VerticalLayout();
-		BeanItemContainer<Profesor> listaProfesores =
-			    new BeanItemContainer<Profesor>(Profesor.class, new BBDD().obtenerProfesoresAlumno(alumno.getId()));
-		Grid profesoresGrid = new Grid(listaProfesores);
-		
-		profesores.setSizeFull();
-		profesoresGrid.setSizeFull();
-		
-		profesores.addComponent(profesoresGrid);
-		
-		return profesores;
 	}
 
 	public VerticalLayout dameNotas() {
-		return new VerticalLayout();
+		VerticalLayout notas = new VerticalLayout();
+		BeanItemContainer<Nota> listaNotas = new BeanItemContainer<Nota>(Nota.class,
+				new BBDD().obtenerNotasAlumno(alumno.getId()));
+		Grid notasGrid = new Grid(listaNotas);
+
+		notas.setSizeFull();
+		notasGrid.setSizeFull();
+
+		notas.addComponent(notasGrid);
+		return notas;
+
 	}
 }

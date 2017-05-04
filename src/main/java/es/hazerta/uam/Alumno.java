@@ -1,14 +1,12 @@
 package es.hazerta.uam;
 
-import com.vaadin.ui.Button;
-
 public class Alumno {
 	private String dni;
 	private String nombre;
 	private String apellidos;
 	private int mesNacimiento;
-	private Button boton;
 	private int id;
+	private String editar;
 	
 	public Alumno(String dni, String nombre, String apellidos, int mesNacimiento,int id) {
 		super();
@@ -16,14 +14,7 @@ public class Alumno {
 		this.nombre = nombre;
 		this.apellidos = apellidos;
 		this.mesNacimiento = mesNacimiento;
-		this.boton = new Button("Editar");
 		this.id = id;
-	}
-	public Button getBoton() {
-		return boton;
-	}
-	public void setBoton(Button boton) {
-		this.boton = boton;
 	}
 	public int getId() {
 		return id;

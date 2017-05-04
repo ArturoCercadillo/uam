@@ -2,10 +2,10 @@ package es.hazerta.uam;
 
 public class Asignatura {
 	private String descripcion;
-	private int profesor;
+	private String profesor;
 	private int id;
 
-	public Asignatura(String descripcion, int profesor, int id) {
+	public Asignatura(String descripcion, String profesor, int id) {
 		super();
 		this.descripcion = descripcion;
 		this.profesor = profesor;
@@ -20,11 +20,11 @@ public class Asignatura {
 		this.descripcion = descripcion;
 	}
 
-	public int getProfesor() {
+	public String getProfesor() {
 		return profesor;
 	}
 
-	public void setProfesor(int profesor) {
+	public void setProfesor(String profesor) {
 		this.profesor = profesor;
 	}
 

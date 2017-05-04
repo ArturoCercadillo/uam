@@ -78,12 +78,12 @@ public class BBDD {
 			try {
 				Class.forName("com.mysql.jdbc.Driver");
 				conn = DriverManager.getConnection("jdbc:mysql://192.168.3.10:3306/universidad", "alumno", "alumno");
-				String SQL = "SELECT * FROM asignaturas inner join alumnos_has_asignaturas on asignaturas.id = asignatura where alumno="+alumno;
+				String SQL = "SELECT * FROM asignaturas inner join alumnos_has_asignaturas on asignaturas.id = asignatura inner join profesores on asignaturas.profesor = profesores.id where alumno="+alumno;
 				Statement sentencia = conn.createStatement();
 				ResultSet rs = sentencia.executeQuery(SQL);
 				while (rs.next()) {
 					String descripcion = rs.getString("descripcion");
-					int profesor = rs.getInt("profesor");
+					String profesor = rs.getString("nombre")+" "+rs.getString("apellidos");
 					int id = rs.getInt("id");
 					asignaturas.add(new Asignatura(descripcion, profesor, id));
 				}
@@ -132,5 +132,36 @@ public class BBDD {
 			}
 		}
 		return profesores;
+	}
+	public List<Nota> obtenerNotasAlumno(int alumno) {
+		List<Nota> notas = new ArrayList<Nota>();
+		if (alumno != 0) {
+			try {
+				Class.forName("com.mysql.jdbc.Driver");
+				conn = DriverManager.getConnection("jdbc:mysql://192.168.3.10:3306/universidad", "alumno", "alumno");
+				String SQL = "SELECT * FROM universidad.notas inner join alumnos on alumno = alumnos.id inner join asignaturas on asignatura = asignaturas.id inner join profesores on asignaturas.profesor = profesores.id where notas.alumno="+alumno;
+				Statement sentencia = conn.createStatement();
+				ResultSet rs = sentencia.executeQuery(SQL);
+				while (rs.next()) {
+					String descripcion = rs.getString("notas.descripcion");
+					String asignatura = rs.getString("asignaturas.descripcion");
+					String profesor = rs.getString("profesores.nombre")+" "+rs.getString("profesores.apellidos");
+					int nota = rs.getInt("calificacion");
+					notas.add(new Nota(nota, asignatura, profesor, descripcion));
+				}
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SQLException e) {
+				System.err.println("Error SQL: " + e.getMessage());
+			}
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return notas;
 	}
 }
