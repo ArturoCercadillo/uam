@@ -4,12 +4,22 @@ public class Asignatura {
 	private String descripcion;
 	private String profesor;
 	private int id;
+	private double media;
 
-	public Asignatura(String descripcion, String profesor, int id) {
+	public Asignatura(String descripcion, String profesor, int id, double media) {
 		super();
 		this.descripcion = descripcion;
 		this.profesor = profesor;
 		this.id = id;
+		this.media = media;
+	}
+
+	public double getMedia() {
+		return media;
+	}
+
+	public void setMedia(double media) {
+		this.media = media;
 	}
 
 	public String getDescripcion() {

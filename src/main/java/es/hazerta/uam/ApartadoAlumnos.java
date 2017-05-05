@@ -1,5 +1,6 @@
 package es.hazerta.uam;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.vaadin.server.Sizeable;
@@ -21,7 +22,7 @@ public class ApartadoAlumnos extends VerticalLayout {
 		vsplit.setSizeFull();
 		vsplit.setResponsive(true);
 		HorizontalLayout botonesLayout = dameBotones();
-		infoLayout = dameVentana();
+		infoLayout = dameVentana(null);
 
 		vsplit.setFirstComponent(infoLayout);
 		vsplit.setSecondComponent(botonesLayout);
@@ -29,11 +30,15 @@ public class ApartadoAlumnos extends VerticalLayout {
 		addComponent(vsplit);
 	}
 
-	public VerticalLayout dameVentana() {
+	public VerticalLayout dameVentana(Alumno al) {
 		VerticalLayout infoLayout = new VerticalLayout();
 		/*BeanItemContainer<Alumno> listaAlumnos =
 			    new BeanItemContainer<Alumno>(Alumno.class, new BBDD().obtenerAlumnos());*/
-		List<Alumno> listaAlumnos = new BBDD().obtenerAlumnos();
+		List<Alumno> listaAlumnos = new ArrayList<Alumno>();
+		if (al == null)
+			listaAlumnos = new BBDD().obtenerAlumnos(al);
+		else
+			listaAlumnos = new BBDD().obtenerAlumnos(al);
 		Grid alumnos = new Grid();
 
 		alumnos.addColumn("Id", Integer.class);
@@ -107,6 +112,11 @@ public class ApartadoAlumnos extends VerticalLayout {
 		botonNuevo.setStyleName("botonesOpciones");
 		botonBuscar.setStyleName("botonesOpciones");
 		botonesLayout2.setStyleName("botonesLayout");
+		
+		botonBuscar.addClickListener(e -> {
+			infoLayout.removeAllComponents();
+			getUI().addWindow(new Buscar(infoLayout));
+		});
 
 		botonesLayout.addComponent(botonNuevo);
 		botonesLayout.addComponent(botonBuscar);

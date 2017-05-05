@@ -1,10 +1,14 @@
 package es.hazerta.uam;
 
+import java.util.List;
+
 import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.ui.AbstractSelect.ItemCaptionMode;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
@@ -60,16 +64,34 @@ public class EditarAlumno extends VerticalLayout {
 		return edicion;
 	}
 
+	/**
+	 * @return
+	 */
 	public VerticalLayout dameAsignaturasProfesores() {
 		VerticalLayout asignaturas = new VerticalLayout();
 		BeanItemContainer<Asignatura> listaAsignaturas = new BeanItemContainer<Asignatura>(Asignatura.class,
 				new BBDD().obtenerAsignaturasAlumno(alumno.getId()));
 		Grid asignaturasGrid = new Grid(listaAsignaturas);
-
+		
+		asignaturasGrid.setColumnOrder("id", "descripcion","profesor","media");
+		
 		asignaturas.setSizeFull();
 		asignaturasGrid.setSizeFull();
 
 		asignaturas.addComponent(asignaturasGrid);
+		
+		HorizontalLayout nuevaAsignaturaLayout = new HorizontalLayout();
+		BeanItemContainer<Asignatura> listaAsignaturasNoMatricula =
+			    new BeanItemContainer<Asignatura>(Asignatura.class, new BBDD().obtenerAsignaturasNoMatricula(alumno.getId()));
+		//List<Asignatura> listaAsignaturasNoMatricula = new BBDD().obtenerAsignaturasNoMatricula(alumno.getId());
+		ComboBox select = new ComboBox("My Select", listaAsignaturasNoMatricula);
+		select.setItemCaptionPropertyId("descripcion");
+		select.addFocusListener(e -> {
+			Notification.show(select.getValue().toString());
+		});
+		nuevaAsignaturaLayout.addComponent(select);
+		asignaturas.addComponent(nuevaAsignaturaLayout);
+		
 		return asignaturas;
 
 	}
@@ -80,6 +102,7 @@ public class EditarAlumno extends VerticalLayout {
 				new BBDD().obtenerNotasAlumno(alumno.getId()));
 		Grid notasGrid = new Grid(listaNotas);
 
+		notasGrid.setColumnOrder("asignatura","profesor","descripcion","nota");
 		notas.setSizeFull();
 		notasGrid.setSizeFull();
 
