@@ -1,4 +1,4 @@
-package es.hazerta.uam;
+package es.hazerta.uam.windows;
 
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
@@ -6,6 +6,8 @@ import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+
+import es.hazerta.uam.views.VistaGeneral;
 
 public class Login extends Window {
 	public Login() {

@@ -1,4 +1,4 @@
-package es.hazerta.uam;
+package es.hazerta.uam.views;
 
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Label;

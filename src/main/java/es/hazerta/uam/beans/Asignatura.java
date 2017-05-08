@@ -1,4 +1,4 @@
-package es.hazerta.uam;
+package es.hazerta.uam.beans;
 
 public class Asignatura {
 	private String descripcion;

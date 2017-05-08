@@ -1,4 +1,4 @@
-package es.hazerta.uam;
+package es.hazerta.uam.views;
 
 import java.util.List;
 
@@ -15,11 +15,18 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
 
+import es.hazerta.uam.beans.Alumno;
+import es.hazerta.uam.beans.Asignatura;
+import es.hazerta.uam.beans.Nota;
+import es.hazerta.uam.controllers.AlumnoLogic;
+
 public class EditarAlumno extends VerticalLayout {
 	Alumno alumno;
+	AlumnoLogic alController;
 
 	public EditarAlumno(Alumno alumno) {
 		this.alumno = alumno;
+		this.alController = new AlumnoLogic();
 		setSizeFull();
 		HorizontalLayout fila1 = new HorizontalLayout();
 		HorizontalLayout fila2 = new HorizontalLayout();
@@ -60,7 +67,7 @@ public class EditarAlumno extends VerticalLayout {
 		guardar.addClickListener(e -> {
 			alumno = new Alumno(dni.getValue(), nombre.getValue(), apellidos.getValue(),
 					Integer.parseInt(mesNacimiento.getValue()), alumno.getId());
-			new BBDD().actualizarAlumno(alumno);
+			alController.actualizarAlumno(alumno); 
 		});
 		
 		edicion.setSizeFull();
@@ -92,7 +99,7 @@ public class EditarAlumno extends VerticalLayout {
 		asignaturasGrid.addColumn("Asignatura", String.class);
 		asignaturasGrid.addColumn("Media", Double.class);
 		
-		for(Asignatura asignatura : new BBDD().obtenerAsignaturasAlumno(alumno.getId())){
+		for(Asignatura asignatura : alController.obtenerAsignaturasAlumno(alumno.getId())){
 			asignaturasGrid.addRow(asignatura.getDescripcion(), asignatura.getMedia());
 		}
 
@@ -106,7 +113,7 @@ public class EditarAlumno extends VerticalLayout {
 		
 		Label titulo = new Label("Matricularme en otra asignatura");
 		
-		List<Asignatura> listaAsignaturasNoMatricula = new BBDD().obtenerAsignaturasNoMatricula(alumno.getId());
+		List<Asignatura> listaAsignaturasNoMatricula = alController.obtenerAsignaturasNoMatricula(alumno.getId());
 
 		IndexedContainer asignaturasContenedor = new IndexedContainer();
 		asignaturasContenedor.addContainerProperty("id", Integer.class, null);
@@ -130,7 +137,7 @@ public class EditarAlumno extends VerticalLayout {
 				Item itemSelected = select.getContainerDataSource().getItem(select.getValue());
 				Integer id = (Integer) itemSelected.getItemProperty("id").getValue();
 				String descripcion = (String) itemSelected.getItemProperty("descripcion").getValue();
-				new BBDD().nuevaAsignaturaAlumno(alumno, new Asignatura(descripcion, "", id, 0));
+				alController.nuevaAsignaturaAlumno(alumno, new Asignatura(descripcion, "", id, 0));
 			} catch (NullPointerException error) {
 				System.out.println("null exception primera selector");
 			}
@@ -156,7 +163,7 @@ public class EditarAlumno extends VerticalLayout {
 	public VerticalLayout dameNotas() {
 		VerticalLayout notas = new VerticalLayout();
 		BeanItemContainer<Nota> listaNotas = new BeanItemContainer<Nota>(Nota.class,
-				new BBDD().obtenerNotasAlumno(alumno.getId()));
+				alController.obtenerNotasAlumno(alumno.getId()));
 		Grid notasGrid = new Grid(listaNotas);
 
 		notasGrid.setColumnOrder("asignatura", "profesor", "descripcion", "nota");

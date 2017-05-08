@@ -1,4 +1,4 @@
-package es.hazerta.uam;
+package es.hazerta.uam.beans;
 
 public class Nota {
 	private int nota;

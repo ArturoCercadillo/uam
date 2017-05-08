@@ -1,4 +1,4 @@
-package es.hazerta.uam;
+package es.hazerta.uam.views;
 
 import java.io.File;
 
