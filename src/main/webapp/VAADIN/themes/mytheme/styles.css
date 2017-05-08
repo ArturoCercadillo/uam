@@ -13025,3 +13025,51 @@ div.v-layout.v-horizontal.v-widget {
 .mytheme .ventanaPrincipal {
 	background-color: #000;
 }
+
+.mytheme .edicion_fila > .v-slot {
+	padding: 0% 1%;
+}
+
+.mytheme .v-grid-header {
+	color: #fff;
+	background: none;
+	background-color: #646464 !important;
+	font-weight: bold;
+}
+
+.mytheme .v-grid-cell {
+	background: none !important;
+}
+
+.mytheme .v-grid-scroller {
+	border: none;
+}
+
+.mytheme .v-grid-scroller::-webkit-scrollbar-thumb {
+	border-radius: 10px;
+	border: 4px solid transparent;
+	background: #ed1c24;
+	-webkit-background-clip: content-box;
+	background-clip: content-box;
+}
+
+.mytheme .v-grid-header-deco {
+	background: none;
+	background-color: #646464 !important;
+}
+
+.mytheme .v-button:focus:after, .mytheme .v-textfield:focus {
+	border-color: #ed1c24;
+	box-shadow: 0 0 0 2px rgba(237, 28, 36, 0.5);
+}
+
+.mytheme .v-grid-row-selected > .v-grid-cell {
+	color: #000000;
+	font-weight: 400;
+	border-color: #f9dedf;
+	background-color: rgba(237, 28, 36, 0.13) !important;
+}
+
+.mytheme .v-grid-cell-focused:before {
+	border: none;
+}

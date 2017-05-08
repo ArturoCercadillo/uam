@@ -22,7 +22,8 @@ public class BBDD {
 		List<Alumno> alumnos = new ArrayList<Alumno>();
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection("jdbc:mysql://192.168.3.10:3306/universidad", "alumno", "alumno");
+//			conn = DriverManager.getConnection("jdbc:mysql://192.168.3.10:3306/universidad", "alumno", "alumno");
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/universidad", "root", "root");
 			String SQL = "";
 			boolean where = false;
 			if (alumno == null)
@@ -84,7 +85,8 @@ public class BBDD {
 		Notification.show("Actualizamos");
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection("jdbc:mysql://192.168.3.10:3306/universidad", "alumno", "alumno");
+//			conn = DriverManager.getConnection("jdbc:mysql://192.168.3.10:3306/universidad", "alumno", "alumno");
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/universidad", "root", "root");
 			String SQL = "update alumnos set dni = ?, nombre = ?, apellidos = ?, mes_nacimiento = ? where id = ?";
 			PreparedStatement preparedStmt = conn.prepareStatement(SQL);
 			preparedStmt.setString(1, alumno.getDni());
@@ -108,7 +110,8 @@ public class BBDD {
 		if (alumno != 0) {
 			try {
 				Class.forName("com.mysql.jdbc.Driver");
-				conn = DriverManager.getConnection("jdbc:mysql://192.168.3.10:3306/universidad", "alumno", "alumno");
+//				conn = DriverManager.getConnection("jdbc:mysql://192.168.3.10:3306/universidad", "alumno", "alumno");
+				conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/universidad", "root", "root");
 				/*
 				 * String SQL = "SELECT *, avg(calificacion) media"; SQL +=
 				 * "FROM asignaturas"; SQL +=
@@ -128,7 +131,7 @@ public class BBDD {
 				SQL += "inner join profesores on asignaturas.profesor = profesores.id ";
 				SQL += "left join notas on notas.alumno = alumnos.id and notas.asignatura = asignaturas.id ";
 				SQL += "WHERE alumnos.id=" + alumno;
-				SQL += " GROUP BY asignaturas.id";
+				SQL += " GROUP BY asignaturas.id ORDER BY media desc";
 
 				Statement sentencia = conn.createStatement();
 				ResultSet rs = sentencia.executeQuery(SQL);
@@ -160,7 +163,8 @@ public class BBDD {
 		if (alumno != 0) {
 			try {
 				Class.forName("com.mysql.jdbc.Driver");
-				conn = DriverManager.getConnection("jdbc:mysql://192.168.3.10:3306/universidad", "alumno", "alumno");
+//				conn = DriverManager.getConnection("jdbc:mysql://192.168.3.10:3306/universidad", "alumno", "alumno");
+				conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/universidad", "root", "root");
 				String SQL = "SELECT * FROM profesores inner join asignaturas on profesores.id = profesor inner join alumnos_has_asignaturas on asignaturas.id = asignatura where alumno="
 						+ alumno;
 				Statement sentencia = conn.createStatement();
@@ -193,7 +197,8 @@ public class BBDD {
 		if (alumno != 0) {
 			try {
 				Class.forName("com.mysql.jdbc.Driver");
-				conn = DriverManager.getConnection("jdbc:mysql://192.168.3.10:3306/universidad", "alumno", "alumno");
+//				conn = DriverManager.getConnection("jdbc:mysql://192.168.3.10:3306/universidad", "alumno", "alumno");
+				conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/universidad", "root", "root");
 				String SQL = "SELECT * FROM universidad.notas inner join alumnos on alumno = alumnos.id inner join asignaturas on asignatura = asignaturas.id inner join profesores on asignaturas.profesor = profesores.id where notas.alumno="
 						+ alumno;
 				Statement sentencia = conn.createStatement();
@@ -226,7 +231,8 @@ public class BBDD {
 		if (alumno != 0) {
 			try {
 				Class.forName("com.mysql.jdbc.Driver");
-				conn = DriverManager.getConnection("jdbc:mysql://192.168.3.10:3306/universidad", "alumno", "alumno");
+//				conn = DriverManager.getConnection("jdbc:mysql://192.168.3.10:3306/universidad", "alumno", "alumno");
+				conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/universidad", "root", "root");
 				/*
 				 * String SQL = "SELECT *, avg(calificacion) media"; SQL +=
 				 * "FROM asignaturas"; SQL +=
@@ -238,11 +244,11 @@ public class BBDD {
 				 * ; SQL += "where alumnos_has_asignaturas.alumno=" + alumno;
 				 * SQL += "group by asignaturas.descripcion";
 				 */
-
+				
 				String SQL = "SELECT * ";
 				SQL += "FROM asignaturas ";
 				SQL += "WHERE asignaturas.id!=any(";
-				SQL += "SELECT asignatura from alumnos_has_asignatura where alumno=" + alumno;
+				SQL += "SELECT asignatura from alumnos_has_asignaturas where alumno=" + alumno+")";
 
 				System.out.println(SQL);
 
@@ -250,7 +256,7 @@ public class BBDD {
 				ResultSet rs = sentencia.executeQuery(SQL);
 				while (rs.next()) {
 					String descripcion = rs.getString("descripcion");
-					String profesor = rs.getString("nombre") + " " + rs.getString("apellidos");
+					String profesor = rs.getString("profesor");
 					int id = rs.getInt("id");
 					double media = 0;
 					asignaturas.add(new Asignatura(descripcion, profesor, id, media));
@@ -268,6 +274,27 @@ public class BBDD {
 				e.printStackTrace();
 			}
 		}
+		System.out.println(asignaturas);
 		return asignaturas;
+	}
+	public void nuevaAsignaturaAlumno(Alumno alumno, Asignatura asignatura) {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+//			conn = DriverManager.getConnection("jdbc:mysql://192.168.3.10:3306/universidad", "alumno", "alumno");
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/universidad", "root", "root");
+			String SQL = "INSERT INTO alumnos_has_asignaturas (alumno, asignatura) VALUES (?,?)";
+			PreparedStatement preparedStmt = conn.prepareStatement(SQL);
+			preparedStmt.setInt(1, alumno.getId());
+			preparedStmt.setInt(2, asignatura.getId());
+			conn.setAutoCommit(true);
+			preparedStmt.executeUpdate();
+			conn.close();
+			Notification.show("Enhorabuena, ahora estás matriculado en "+asignatura.getDescripcion());
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			System.err.println("Error SQL: " + e.getMessage());
+		}
 	}
 }

@@ -2,15 +2,18 @@ package es.hazerta.uam;
 
 import java.util.List;
 
+import com.vaadin.data.Item;
 import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.ui.AbstractSelect.ItemCaptionMode;
+import com.vaadin.data.util.IndexedContainer;
+import com.vaadin.server.Sizeable;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Notification;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.VerticalSplitPanel;
 
 public class EditarAlumno extends VerticalLayout {
 	Alumno alumno;
@@ -37,6 +40,13 @@ public class EditarAlumno extends VerticalLayout {
 
 	public VerticalLayout dameEdicion() {
 		VerticalLayout edicion = new VerticalLayout();
+		
+		HorizontalLayout fila1 = new HorizontalLayout();
+		HorizontalLayout fila2 = new HorizontalLayout();
+		
+		fila1.setStyleName("edicion_fila");
+		fila2.setStyleName("edicion_fila");
+		
 		TextField nombre = new TextField("Nombre");
 		TextField apellidos = new TextField("Apellidos");
 		TextField dni = new TextField("DNI");
@@ -52,13 +62,15 @@ public class EditarAlumno extends VerticalLayout {
 					Integer.parseInt(mesNacimiento.getValue()), alumno.getId());
 			new BBDD().actualizarAlumno(alumno);
 		});
-
+		
 		edicion.setSizeFull();
 
-		edicion.addComponent(nombre);
-		edicion.addComponent(apellidos);
-		edicion.addComponent(dni);
-		edicion.addComponent(mesNacimiento);
+		fila1.addComponent(nombre);
+		fila1.addComponent(apellidos);
+		fila2.addComponent(dni);
+		fila2.addComponent(mesNacimiento);
+		edicion.addComponent(fila1);
+		edicion.addComponent(fila2);
 		edicion.addComponent(guardar);
 
 		return edicion;
@@ -67,32 +79,77 @@ public class EditarAlumno extends VerticalLayout {
 	/**
 	 * @return
 	 */
-	public VerticalLayout dameAsignaturasProfesores() {
+	public VerticalSplitPanel dameAsignaturasProfesores() {
+		VerticalSplitPanel asignaturasSplit = new VerticalSplitPanel();
 		VerticalLayout asignaturas = new VerticalLayout();
-		BeanItemContainer<Asignatura> listaAsignaturas = new BeanItemContainer<Asignatura>(Asignatura.class,
-				new BBDD().obtenerAsignaturasAlumno(alumno.getId()));
-		Grid asignaturasGrid = new Grid(listaAsignaturas);
+//		BeanItemContainer<Asignatura> listaAsignaturas = new BeanItemContainer<Asignatura>(Asignatura.class,
+//				new BBDD().obtenerAsignaturasAlumno(alumno.getId()));
+//		Grid asignaturasGrid = new Grid(listaAsignaturas);
+		Grid asignaturasGrid = new Grid();
+
+//		asignaturasGrid.setColumnOrder("id", "descripcion", "profesor", "media");
 		
-		asignaturasGrid.setColumnOrder("id", "descripcion","profesor","media");
+		asignaturasGrid.addColumn("Asignatura", String.class);
+		asignaturasGrid.addColumn("Media", Double.class);
 		
+		for(Asignatura asignatura : new BBDD().obtenerAsignaturasAlumno(alumno.getId())){
+			asignaturasGrid.addRow(asignatura.getDescripcion(), asignatura.getMedia());
+		}
+
 		asignaturas.setSizeFull();
 		asignaturasGrid.setSizeFull();
 
 		asignaturas.addComponent(asignaturasGrid);
+
+		VerticalLayout nuevaAsignaturaLayout = new VerticalLayout();
+		HorizontalLayout nuevaAsignaturaLayoutForm = new HorizontalLayout();
 		
-		HorizontalLayout nuevaAsignaturaLayout = new HorizontalLayout();
-		BeanItemContainer<Asignatura> listaAsignaturasNoMatricula =
-			    new BeanItemContainer<Asignatura>(Asignatura.class, new BBDD().obtenerAsignaturasNoMatricula(alumno.getId()));
-		//List<Asignatura> listaAsignaturasNoMatricula = new BBDD().obtenerAsignaturasNoMatricula(alumno.getId());
-		ComboBox select = new ComboBox("My Select", listaAsignaturasNoMatricula);
+		Label titulo = new Label("Matricularme en otra asignatura");
+		
+		List<Asignatura> listaAsignaturasNoMatricula = new BBDD().obtenerAsignaturasNoMatricula(alumno.getId());
+
+		IndexedContainer asignaturasContenedor = new IndexedContainer();
+		asignaturasContenedor.addContainerProperty("id", Integer.class, null);
+		asignaturasContenedor.addContainerProperty("descripcion", String.class, null);
+		
+		int i = 0;
+		for (Asignatura asignatura : listaAsignaturasNoMatricula) {
+			Item item = asignaturasContenedor.addItem(i);
+			item.getItemProperty("id").setValue(asignatura.getId());
+			item.getItemProperty("descripcion").setValue(asignatura.getDescripcion());
+			i++;
+		}
+
+		ComboBox select = new ComboBox();
+		select.setContainerDataSource(asignaturasContenedor);
 		select.setItemCaptionPropertyId("descripcion");
-		select.addFocusListener(e -> {
-			Notification.show(select.getValue().toString());
-		});
-		nuevaAsignaturaLayout.addComponent(select);
-		asignaturas.addComponent(nuevaAsignaturaLayout);
 		
-		return asignaturas;
+		Button matricular = new Button("Matricular");
+		matricular.addClickListener(e -> {
+			try {
+				Item itemSelected = select.getContainerDataSource().getItem(select.getValue());
+				Integer id = (Integer) itemSelected.getItemProperty("id").getValue();
+				String descripcion = (String) itemSelected.getItemProperty("descripcion").getValue();
+				new BBDD().nuevaAsignaturaAlumno(alumno, new Asignatura(descripcion, "", id, 0));
+			} catch (NullPointerException error) {
+				System.out.println("null exception primera selector");
+			}
+		});
+		
+		nuevaAsignaturaLayout.setStyleName("nuevaAsignaturaLayout");
+		nuevaAsignaturaLayoutForm.setStyleName("nuevaAsignaturaLayoutForm");
+		
+		nuevaAsignaturaLayout.addComponent(titulo);
+		nuevaAsignaturaLayoutForm.addComponent(select);
+		nuevaAsignaturaLayoutForm.addComponent(matricular);
+		nuevaAsignaturaLayout.addComponent(nuevaAsignaturaLayoutForm);
+		//asignaturas.addComponent(nuevaAsignaturaLayout);
+		
+		asignaturasSplit.setSplitPosition(70, Sizeable.UNITS_PERCENTAGE);
+		asignaturasSplit.setFirstComponent(asignaturas);
+		asignaturasSplit.setSecondComponent(nuevaAsignaturaLayout);
+		
+		return asignaturasSplit;
 
 	}
 
@@ -102,7 +159,7 @@ public class EditarAlumno extends VerticalLayout {
 				new BBDD().obtenerNotasAlumno(alumno.getId()));
 		Grid notasGrid = new Grid(listaNotas);
 
-		notasGrid.setColumnOrder("asignatura","profesor","descripcion","nota");
+		notasGrid.setColumnOrder("asignatura", "profesor", "descripcion", "nota");
 		notas.setSizeFull();
 		notasGrid.setSizeFull();
 

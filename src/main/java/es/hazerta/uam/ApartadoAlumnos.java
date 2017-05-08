@@ -92,6 +92,7 @@ public class ApartadoAlumnos extends VerticalLayout {
 				Notification.show("Nothing selected");
 		});*/
 
+		alumnos.setStyleName("tabla");
 		alumnos.setSizeFull();
 
 		infoLayout.setSizeFull();
