@@ -11,9 +11,10 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
 import com.vaadin.ui.renderers.ButtonRenderer;
 
-import es.hazerta.uam.bbdd.BBDD;
 import es.hazerta.uam.beans.Alumno;
-import es.hazerta.uam.controllers.AlumnoLogic;
+import es.hazerta.uam.logic.AlumnoLogic;
+import es.hazerta.uam.windows.Añadir;
+import es.hazerta.uam.windows.Borrar;
 import es.hazerta.uam.windows.Buscar;
 
 public class ApartadoAlumnos extends VerticalLayout {
@@ -116,18 +117,31 @@ public class ApartadoAlumnos extends VerticalLayout {
 		botonesLayout2.setSizeFull();
 		Button botonNuevo = new Button("Añadir Alumno");
 		Button botonBuscar = new Button("Buscar Alumno");
+		Button botonBorrar = new Button("Borrar Alumno");
 
 		botonNuevo.setStyleName("botonesOpciones");
 		botonBuscar.setStyleName("botonesOpciones");
+		botonBorrar.setStyleName("botonesOpciones");
 		botonesLayout2.setStyleName("botonesLayout");
 
+		botonNuevo.addClickListener(e -> {
+			infoLayout.removeAllComponents();
+			getUI().addWindow(new Añadir(infoLayout));
+		});
+		
 		botonBuscar.addClickListener(e -> {
 			infoLayout.removeAllComponents();
 			getUI().addWindow(new Buscar(infoLayout));
 		});
+		
+		botonBorrar.addClickListener(e -> {
+			infoLayout.removeAllComponents();
+			getUI().addWindow(new Borrar(infoLayout));
+		});
 
 		botonesLayout.addComponent(botonNuevo);
 		botonesLayout.addComponent(botonBuscar);
+		botonesLayout.addComponent(botonBorrar);
 		botonesLayout2.addComponent(botonesLayout);
 
 		return botonesLayout2;

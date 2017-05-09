@@ -1,4 +1,4 @@
-package es.hazerta.uam.controllers;
+package es.hazerta.uam.logic;
 
 import com.vaadin.data.Item;
 

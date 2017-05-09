@@ -1,11 +1,11 @@
-package es.hazerta.uam.controllers;
+package es.hazerta.uam.logic;
 
 import com.vaadin.data.Item;
 
 import es.hazerta.uam.beans.Alumno;
 
-public class LoginLogic {
-	public LoginLogic() {
+public class ProfesorLogic {
+	public ProfesorLogic() {
 		// TODO Auto-generated constructor stub
 	}
 	public Alumno obtenerAlumno(Item item){

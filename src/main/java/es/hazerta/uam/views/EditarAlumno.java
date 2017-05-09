@@ -18,7 +18,7 @@ import com.vaadin.ui.VerticalSplitPanel;
 import es.hazerta.uam.beans.Alumno;
 import es.hazerta.uam.beans.Asignatura;
 import es.hazerta.uam.beans.Nota;
-import es.hazerta.uam.controllers.AlumnoLogic;
+import es.hazerta.uam.logic.AlumnoLogic;
 
 public class EditarAlumno extends VerticalLayout {
 	Alumno alumno;

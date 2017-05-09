@@ -1,4 +1,4 @@
-package es.hazerta.uam.controllers;
+package es.hazerta.uam.logic;
 
 import java.util.List;
 
@@ -42,5 +42,11 @@ public class AlumnoLogic {
 	}
 	public List<Nota> obtenerNotasAlumno(int alumno){
 		return bbdd.obtenerNotasAlumno(alumno);
+	}
+	public void nuevoAlumno(Alumno alumno){
+		bbdd.nuevoAlumno(alumno);
+	}
+	public void borrarAlumno(int alumno){
+		bbdd.borrarAlumno(alumno);
 	}
 }

@@ -15,6 +15,7 @@ import es.hazerta.uam.beans.Alumno;
 import es.hazerta.uam.beans.Asignatura;
 import es.hazerta.uam.beans.Nota;
 import es.hazerta.uam.beans.Profesor;
+import es.hazerta.uam.utils.Constantes;
 
 public class BBDD {
 	Connection conn;
@@ -27,9 +28,8 @@ public class BBDD {
 	public List<Alumno> obtenerAlumnos(Alumno alumno) {
 		List<Alumno> alumnos = new ArrayList<Alumno>();
 		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection("jdbc:mysql://192.168.3.10:3306/universidad", "alumno", "alumno");
-//			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/universidad", "root", "root");
+			Class.forName(Constantes.CONEXION_DRIVER);
+			conn = DriverManager.getConnection(Constantes.CONEXION_URL, Constantes.CONEXION_USER, Constantes.CONEXION_PASS);
 			String SQL = "";
 			boolean where = false;
 			if (alumno == null)
@@ -90,9 +90,8 @@ public class BBDD {
 	public void actualizarAlumno(Alumno alumno) {
 		Notification.show("Actualizamos");
 		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection("jdbc:mysql://192.168.3.10:3306/universidad", "alumno", "alumno");
-//			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/universidad", "root", "root");
+			Class.forName(Constantes.CONEXION_DRIVER);
+			conn = DriverManager.getConnection(Constantes.CONEXION_URL, Constantes.CONEXION_USER, Constantes.CONEXION_PASS);
 			String SQL = "update alumnos set dni = ?, nombre = ?, apellidos = ?, mes_nacimiento = ? where id = ?";
 			PreparedStatement preparedStmt = conn.prepareStatement(SQL);
 			preparedStmt.setString(1, alumno.getDni());
@@ -115,9 +114,8 @@ public class BBDD {
 		List<Asignatura> asignaturas = new ArrayList<Asignatura>();
 		if (alumno != 0) {
 			try {
-				Class.forName("com.mysql.jdbc.Driver");
-				conn = DriverManager.getConnection("jdbc:mysql://192.168.3.10:3306/universidad", "alumno", "alumno");
-//				conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/universidad", "root", "root");
+				Class.forName(Constantes.CONEXION_DRIVER);
+				conn = DriverManager.getConnection(Constantes.CONEXION_URL, Constantes.CONEXION_USER, Constantes.CONEXION_PASS);
 				/*
 				 * String SQL = "SELECT *, avg(calificacion) media"; SQL +=
 				 * "FROM asignaturas"; SQL +=
@@ -168,9 +166,8 @@ public class BBDD {
 		List<Profesor> profesores = new ArrayList<Profesor>();
 		if (alumno != 0) {
 			try {
-				Class.forName("com.mysql.jdbc.Driver");
-				conn = DriverManager.getConnection("jdbc:mysql://192.168.3.10:3306/universidad", "alumno", "alumno");
-//				conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/universidad", "root", "root");
+				Class.forName(Constantes.CONEXION_DRIVER);
+				conn = DriverManager.getConnection(Constantes.CONEXION_URL, Constantes.CONEXION_USER, Constantes.CONEXION_PASS);
 				String SQL = "SELECT * FROM profesores inner join asignaturas on profesores.id = profesor inner join alumnos_has_asignaturas on asignaturas.id = asignatura where alumno="
 						+ alumno;
 				Statement sentencia = conn.createStatement();
@@ -202,9 +199,8 @@ public class BBDD {
 		List<Nota> notas = new ArrayList<Nota>();
 		if (alumno != 0) {
 			try {
-				Class.forName("com.mysql.jdbc.Driver");
-				conn = DriverManager.getConnection("jdbc:mysql://192.168.3.10:3306/universidad", "alumno", "alumno");
-//				conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/universidad", "root", "root");
+				Class.forName(Constantes.CONEXION_DRIVER);
+				conn = DriverManager.getConnection(Constantes.CONEXION_URL, Constantes.CONEXION_USER, Constantes.CONEXION_PASS);
 				String SQL = "SELECT * FROM universidad.notas inner join alumnos on alumno = alumnos.id inner join asignaturas on asignatura = asignaturas.id inner join profesores on asignaturas.profesor = profesores.id where notas.alumno="
 						+ alumno;
 				Statement sentencia = conn.createStatement();
@@ -236,9 +232,8 @@ public class BBDD {
 		List<Asignatura> asignaturas = new ArrayList<Asignatura>();
 		if (alumno != 0) {
 			try {
-				Class.forName("com.mysql.jdbc.Driver");
-				conn = DriverManager.getConnection("jdbc:mysql://192.168.3.10:3306/universidad", "alumno", "alumno");
-//				conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/universidad", "root", "root");
+				Class.forName(Constantes.CONEXION_DRIVER);
+				conn = DriverManager.getConnection(Constantes.CONEXION_URL, Constantes.CONEXION_USER, Constantes.CONEXION_PASS);
 				/*
 				 * String SQL = "SELECT *, avg(calificacion) media"; SQL +=
 				 * "FROM asignaturas"; SQL +=
@@ -285,9 +280,8 @@ public class BBDD {
 	}
 	public void nuevaAsignaturaAlumno(Alumno alumno, Asignatura asignatura) {
 		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection("jdbc:mysql://192.168.3.10:3306/universidad", "alumno", "alumno");
-//			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/universidad", "root", "root");
+			Class.forName(Constantes.CONEXION_DRIVER);
+			conn = DriverManager.getConnection(Constantes.CONEXION_URL, Constantes.CONEXION_USER, Constantes.CONEXION_PASS);
 			String SQL = "INSERT INTO alumnos_has_asignaturas (alumno, asignatura) VALUES (?,?)";
 			PreparedStatement preparedStmt = conn.prepareStatement(SQL);
 			preparedStmt.setInt(1, alumno.getId());
@@ -303,4 +297,149 @@ public class BBDD {
 			System.err.println("Error SQL: " + e.getMessage());
 		}
 	}
+	public boolean login(String user, String pass) {
+		if (esAlumno(user, pass))
+			return true;
+		else
+			return esProfesor(user, pass);
+		
+	}
+	public boolean esAlumno(String user, String pass){
+		boolean sw = false;
+		try {
+			Class.forName(Constantes.CONEXION_DRIVER);
+			conn = DriverManager.getConnection(Constantes.CONEXION_URL, Constantes.CONEXION_USER, Constantes.CONEXION_PASS);
+			String SQL = "SELECT * FROM alumnos where nombre='"+user+"'";
+			System.out.println(SQL);
+			Statement sentencia = conn.createStatement();
+			ResultSet rs = sentencia.executeQuery(SQL);
+			while (rs.next()) {
+				if (pass.equals(rs.getString("dni")))
+					sw=true;
+			}
+			if (!sw){
+				SQL = "SELECT * FROM profesores where nombre='"+user+"'";
+				System.out.println(SQL);
+				sentencia = conn.createStatement();
+				rs = sentencia.executeQuery(SQL);
+				while (rs.next()) {
+					if (pass.equals(rs.getString("despacho")))
+						sw=true;
+				}
+			}
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			System.err.println("Error SQL: " + e.getMessage());
+		}
+		try {
+			conn.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return sw;
+	}
+	public boolean esProfesor(String user, String pass){
+		boolean sw = false;
+		try {
+			Class.forName(Constantes.CONEXION_DRIVER);
+			conn = DriverManager.getConnection(Constantes.CONEXION_URL, Constantes.CONEXION_USER, Constantes.CONEXION_PASS);
+			String SQL = "SELECT * FROM profesores where nombre='"+user+"'";
+			System.out.println(SQL);
+			Statement sentencia = conn.createStatement();
+			ResultSet rs = sentencia.executeQuery(SQL);
+			while (rs.next()) {
+				if (pass.equals(rs.getString("despacho")))
+					sw=true;
+			}
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			System.err.println("Error SQL: " + e.getMessage());
+		}
+		try {
+			conn.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return sw;
+	}
+	public boolean nuevoAlumno(Alumno alumno){
+		boolean sw = true;
+			try {
+				Class.forName(Constantes.CONEXION_DRIVER);
+				conn = DriverManager.getConnection(Constantes.CONEXION_URL, Constantes.CONEXION_USER, Constantes.CONEXION_PASS);
+				String SQL = "insert into alumnos (dni, nombre, apellidos, mes_nacimiento) values (?,?,?,?)";
+				PreparedStatement preparedStmt = conn.prepareStatement(SQL);
+				preparedStmt.setString(1, alumno.getDni());
+				preparedStmt.setString(2, alumno.getNombre());
+				preparedStmt.setString(3, alumno.getApellidos());
+				preparedStmt.setInt(4, alumno.getMesNacimiento());
+				conn.setAutoCommit(true);
+				int numeroDeFilasAfectadas = preparedStmt.executeUpdate();
+				conn.close();
+				if (numeroDeFilasAfectadas!=1){
+					sw=false;
+				}
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				sw=false;
+			} catch (SQLException e) {
+				System.err.println("Error SQL: " + e.getMessage());
+				sw=false;
+			}
+		return sw;
+	}
+	public void borrarAlumno(int alumno){
+		borrarAlumnoAsignaturas(alumno);
+		borrarAlumnoNotas(alumno);
+		try {
+			Class.forName(Constantes.CONEXION_DRIVER);
+				conn = DriverManager.getConnection(Constantes.CONEXION_URL, Constantes.CONEXION_USER, Constantes.CONEXION_PASS);
+				String SQL = "DELETE FROM alumnos where id="+alumno;
+				PreparedStatement preparedStmt = conn.prepareStatement(SQL);
+				preparedStmt.executeUpdate();
+				conn.close();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SQLException e) {
+				System.err.println("Error SQL: " + e.getMessage());
+			}
+	}
+	public void borrarAlumnoNotas(int alumno){
+		try {
+			Class.forName(Constantes.CONEXION_DRIVER);
+			conn = DriverManager.getConnection(Constantes.CONEXION_URL, Constantes.CONEXION_USER, Constantes.CONEXION_PASS);
+			String SQL = "DELETE FROM notas where alumno="+alumno;
+			PreparedStatement preparedStmt = conn.prepareStatement(SQL);
+			preparedStmt.executeUpdate();
+			conn.close();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			System.err.println("Error SQL: " + e.getMessage());
+		}
+}
+	public void borrarAlumnoAsignaturas(int alumno){
+		try {
+			Class.forName(Constantes.CONEXION_DRIVER);
+			conn = DriverManager.getConnection(Constantes.CONEXION_URL, Constantes.CONEXION_USER, Constantes.CONEXION_PASS);
+			String SQL = "DELETE FROM alumnos_has_asignaturas where alumno="+alumno;
+			PreparedStatement preparedStmt = conn.prepareStatement(SQL);
+			preparedStmt.executeUpdate();
+			conn.close();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			System.err.println("Error SQL: " + e.getMessage());
+		}
+}
 }
